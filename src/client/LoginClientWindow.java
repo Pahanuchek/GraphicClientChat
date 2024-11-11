@@ -22,17 +22,23 @@ public class LoginClientWindow extends JFrame {
     private final JTextField login = new JTextField("");
     private final JPasswordField password = new JPasswordField("");
     private final JButton btnLogin = new JButton("Login");
-    private final ChatClientWindow chatClientWindow = new ChatClientWindow();
     private final ServerWindow serverWindow;
 
     public LoginClientWindow(ServerWindow serverWindow) {
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.serverWindow = serverWindow;
+        setupWindow();
+        setupComponents();
+        setVisible(true);
+    }
+
+    private void setupWindow() {
         setLocation(WINDOW_POSX, WINDOW_POSY);
         setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         setTitle("Login");
         setResizable(false);
-        this.serverWindow = serverWindow;
+    }
 
+    private void setupComponents() {
         panel.add(ipAddressLabel);
         panel.add(ipAddress);
         panel.add(portLabel);
@@ -41,13 +47,12 @@ public class LoginClientWindow extends JFrame {
         panel.add(login);
         panel.add(passwordLabel);
         panel.add(password);
+
         add(panel, BorderLayout.NORTH);
         add(log, BorderLayout.CENTER);
         add(btnLogin, BorderLayout.SOUTH);
 
         btnLogin.addActionListener(e -> login());
-
-        setVisible(true);
     }
 
     public Client createClient() {
@@ -64,10 +69,13 @@ public class LoginClientWindow extends JFrame {
 
     public void login() {
         Client client = createClient();
-        if(client != null && serverWindow.isServerWorking) {
-            log.append("Вы успешно подключились!\n");
-            serverWindow.log.append(client.getLogin() + " подключился к беседе.\n");
+        if(client != null && serverWindow.getIsServerWorking()) {
+            ChatClientWindow chatClientWindow = new ChatClientWindow(client, serverWindow, this);
+            serverWindow.addLog(client.getLogin() + " подключился к беседе.\n");
             chatClientWindow.setVisible(true);
+            chatClientWindow.appendText(client.getLogin() + " вы успешно подключились!\n");
+            serverWindow.addChatClient(chatClientWindow);
+            serverWindow.sendChatHistory(chatClientWindow);
             this.setVisible(false);
         } else {
             log.append("Сервер недоступен!\n");
