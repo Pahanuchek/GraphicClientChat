@@ -1,6 +1,6 @@
 package client;
 
-import server.ServerWindow;
+import server.Server;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,10 +22,10 @@ public class LoginClientWindow extends JFrame {
     private final JTextField login = new JTextField("");
     private final JPasswordField password = new JPasswordField("");
     private final JButton btnLogin = new JButton("Login");
-    private final ServerWindow serverWindow;
+    private final Server server;
 
-    public LoginClientWindow(ServerWindow serverWindow) {
-        this.serverWindow = serverWindow;
+    public LoginClientWindow(Server server) {
+        this.server = server;
         setupWindow();
         setupComponents();
         setVisible(true);
@@ -69,13 +69,13 @@ public class LoginClientWindow extends JFrame {
 
     public void login() {
         Client client = createClient();
-        if(client != null && serverWindow.getIsServerWorking()) {
-            ChatClientWindow chatClientWindow = new ChatClientWindow(client, serverWindow, this);
-            serverWindow.addLog(client.getLogin() + " подключился к беседе.\n");
+        if(client != null && server.isServerWorking()) {
+            ChatClientWindow chatClientWindow = new ChatClientWindow(client, server, this);
+            server.addLog(client.getLogin() + " подключился к беседе.\n");
             chatClientWindow.setVisible(true);
             chatClientWindow.appendText(client.getLogin() + " вы успешно подключились!\n");
-            serverWindow.addChatClient(chatClientWindow);
-            serverWindow.sendChatHistory(chatClientWindow);
+            server.addChatClient(chatClientWindow);
+            server.sendChatHistory(chatClientWindow);
             this.setVisible(false);
         } else {
             log.append("Сервер недоступен!\n");

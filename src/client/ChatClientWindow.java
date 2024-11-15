@@ -1,6 +1,6 @@
 package client;
 
-import server.ServerWindow;
+import server.Server;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -11,22 +11,22 @@ public class ChatClientWindow extends JFrame {
     private static final int WINDOW_WIDTH = 300;
     private static final int WINDOW_POSX = 100;
     private static final int WINDOW_POSY = 150;
-    private static final JPanel panel = new JPanel();
-    private final JTextArea text = new JTextArea();
-    private final JTextArea message  =new JTextArea();
-    private final JButton btnSend = new JButton("Send");
-    private final Client client;
-    private final ServerWindow serverWindow;
-    private final LoginClientWindow loginClientWindow;
+    private JPanel panel = new JPanel();
+    private JTextArea text = new JTextArea();
+    private JTextArea message  =new JTextArea();
+    private JButton btnSend = new JButton("Send");
+    private Client client;
+    private Server server;
+    private LoginClientWindow loginClientWindow;
 
     public LoginClientWindow getLoginClientWindow() {
         return loginClientWindow;
     }
 
-    public ChatClientWindow(Client client, ServerWindow serverWindow, LoginClientWindow loginClientWindow) {
+    public ChatClientWindow(Client client, Server server, LoginClientWindow loginClientWindow) {
 
         this.client = client;
-        this.serverWindow = serverWindow;
+        this.server = server;
         this.loginClientWindow = loginClientWindow;
 
         setupWindow();
@@ -54,7 +54,7 @@ public class ChatClientWindow extends JFrame {
         message.setRows(3);
         message.setColumns(15);
 
-        JPanel panel = new JPanel();
+
         panel.setLayout(new BorderLayout());
         panel.add(message, BorderLayout.CENTER);
         panel.add(btnSend, BorderLayout.EAST);
@@ -67,7 +67,7 @@ public class ChatClientWindow extends JFrame {
         String textMessage = message.getText().trim();
         String login = client.getLogin();
         if (!textMessage.isEmpty()) {
-            serverWindow.receiveMessage(login, textMessage);
+            server.receiveMessage(login, textMessage);
             message.setText("");
         }
     }
